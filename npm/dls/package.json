@@ -1,0 +1,16 @@
+{
+  "name": "dls",
+  "version": "0.0.1",
+  "description": "Dependency list",
+  "main": "lib/index.js",
+  "scripts": {
+    "dev": "tsc --watch",
+    "build": "tsc"
+  },
+  "author": "Rongjian Zhang",
+  "license": "MIT",
+  "packageManager": "pnpm@8.6.2",
+  "devDependencies": {
+    "typescript": "^5.1.3"
+  }
+}
