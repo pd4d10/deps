@@ -4,12 +4,99 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+dependencies:
+  '@ast-grep/napi':
+    specifier: ^0.6.3
+    version: 0.6.3
+  '@types/node':
+    specifier: ^20.3.1
+    version: 20.3.1
+  cac:
+    specifier: ^6.7.14
+    version: 6.7.14
+
 devDependencies:
   typescript:
     specifier: ^5.1.3
     version: 5.1.3
 
 packages:
+
+  /@ast-grep/napi-darwin-arm64@0.6.3:
+    resolution: {integrity: sha512-ugOsTl0+nthxP0X8zWYQ1x3JJA4M3b/jsFmhS7ZlX4c400+dHBTbAdhf1i4S3wVUMm7Ov+ao3inUE1lYsbOjRQ==}
+    engines: {node: '>= 10'}
+    cpu: [arm64]
+    os: [darwin]
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /@ast-grep/napi-darwin-x64@0.6.3:
+    resolution: {integrity: sha512-tDI1xydULBZVsHc5AjlGCd2RtHJLmuApjpwmS9pCNP7POdnju1annWcEO/azgxd/kdCZPSgzq6rFDZNxlfj8XA==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [darwin]
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /@ast-grep/napi-linux-x64-gnu@0.6.3:
+    resolution: {integrity: sha512-NLlr5dZQEYsIJ6ceSkEFuenWXFr4ylmObVZ4iHUAaFkrAkRGRgSv3uUt2SVManpb1A3DTGWJxenGkorSN1UqLQ==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [linux]
+    libc: [glibc]
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /@ast-grep/napi-win32-arm64-msvc@0.6.3:
+    resolution: {integrity: sha512-Kl04GlWiZkUckRWHauTSOYEthD1rCe6fgpTc0N7ekjAjmmbgBaA02pdRXF7ZuQj0quv29Mh6fwoLTd+n99YoUg==}
+    engines: {node: '>= 10'}
+    cpu: [arm64]
+    os: [win32]
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /@ast-grep/napi-win32-ia32-msvc@0.6.3:
+    resolution: {integrity: sha512-GaOJXwraXDKkoSschNZNKQLny4NlFthONp+lRGyU1bH7SFz7JtwI9Lq5aslLuGDUrHcsSNFaQneLOsAZ31Fh+A==}
+    engines: {node: '>= 10'}
+    cpu: [ia32]
+    os: [win32]
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /@ast-grep/napi-win32-x64-msvc@0.6.3:
+    resolution: {integrity: sha512-w80rlGJOXadZ1TYo3OkoBcbeHhD71pNHDZ3MH+Tbey0W/Jh2ZhRMugo3m7OjP43hxrLsMGAMPgkIEXlsF1B6Ow==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [win32]
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /@ast-grep/napi@0.6.3:
+    resolution: {integrity: sha512-jU95RiwScDmJmJXz0vzUcaG1nxRBSMzuGCwcuAt7sua1Klt+tbRetf0PbIsgY1a3aA9JsmMhiF8pegZHtBpjTA==}
+    engines: {node: '>= 10'}
+    optionalDependencies:
+      '@ast-grep/napi-darwin-arm64': 0.6.3
+      '@ast-grep/napi-darwin-x64': 0.6.3
+      '@ast-grep/napi-linux-x64-gnu': 0.6.3
+      '@ast-grep/napi-win32-arm64-msvc': 0.6.3
+      '@ast-grep/napi-win32-ia32-msvc': 0.6.3
+      '@ast-grep/napi-win32-x64-msvc': 0.6.3
+    dev: false
+
+  /@types/node@20.3.1:
+    resolution: {integrity: sha512-EhcH/wvidPy1WeML3TtYFGR83UzjxeWRen9V402T8aUGYsCHOmfoisV3ZSg03gAFIbLq8TnWOJ0f4cALtnSEUg==}
+    dev: false
+
+  /cac@6.7.14:
+    resolution: {integrity: sha512-b6Ilus+c3RrdDk+JhLKUAQfzzgLEPy6wcXqS7f/xe1EETvsDP6GORG7SFuOs6cID5YkqchW/LXZbX5bc8j7ZcQ==}
+    engines: {node: '>=8'}
+    dev: false
 
   /typescript@5.1.3:
     resolution: {integrity: sha512-XH627E9vkeqhlZFQuL+UsyAXEnibT0kWR2FWONlr4sTjvxyJYnyefgrkyECLzM5NenmKzRAy2rR/OlYLA1HkZw==}
