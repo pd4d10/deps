@@ -1,11 +1,17 @@
 import cac from "cac";
-import { findDeps } from ".";
+import { TreeNode, collectDeps } from ".";
 
 const cli = cac();
 
 cli.command("dep [file]").action(async (file: string) => {
-  const deps = await findDeps(file);
-  console.log(deps);
+  const root: TreeNode = {
+    path: file,
+    children: [],
+    circular: false,
+  };
+  const files = new Set<string>();
+  await collectDeps(file, root, files);
+  console.log(JSON.stringify(root, null, 2));
 });
 
 cli.help();

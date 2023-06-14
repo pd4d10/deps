@@ -13,16 +13,63 @@ function getLang(file: string) {
   }
 }
 
-export async function findDeps(entry: string) {
-  const code = await fs.promises.readFile(entry, "utf-8");
-  const deps = getLang(entry)
-    .parse(code)
-    .root()
-    .findAll("const $A = $B")
-    .map((node) => {
-      const { start, end } = node.range();
-      return code.slice(start.index, end.index);
-    });
+export type TreeNode = {
+  path: string;
+  children: TreeNode[];
+  circular: boolean;
+};
 
-  return deps;
+function resolveFile(specifier: string) {
+  for (const suffix of [
+    ".js",
+    ".jsx",
+    ".ts",
+    ".tsx",
+    "/index.js",
+    "/index.jsx",
+    "/index.ts",
+    "/index.tsx",
+  ]) {
+    const fullPath = specifier + suffix;
+    if (fs.existsSync(fullPath)) return fullPath;
+  }
+
+  throw new Error("file not exists: " + specifier);
+}
+
+export async function collectDeps(
+  entry: string,
+  parent: TreeNode,
+  files: Set<string>
+) {
+  console.log("[scanning]", entry);
+
+  const circular = files.has(entry);
+  const current: TreeNode = {
+    path: entry,
+    children: [],
+    circular,
+  };
+
+  parent.children.push(current);
+  files.add(entry);
+
+  if (!circular) {
+    const code = await fs.promises.readFile(entry, "utf-8");
+    const deps = getLang(entry)
+      .parse(code)
+      .root()
+      .findAll('import $_ from "$PATH"')
+      .flatMap((node) => {
+        const match = node.getMatch("PATH");
+        return match ? [match.text()] : [];
+      });
+
+    for (const dep of deps) {
+      if (!dep.startsWith(".")) continue;
+
+      const absPath = resolveFile(path.resolve(path.dirname(entry), dep));
+      await collectDeps(absPath, current, files);
+    }
+  }
 }
