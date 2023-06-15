@@ -72,7 +72,7 @@ impl Walker {
     pub fn collect_all(&mut self) {
         let output = Command::new("git")
             .current_dir(Path::new(&self.root))
-            .args(["ls-files", "b"])
+            .arg("ls-files")
             .output()
             .expect("git list files fail");
         let files = output.stdout.lines().map(|str| str.unwrap());
