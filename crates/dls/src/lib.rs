@@ -14,6 +14,8 @@ pub struct Walker {
     pub graph: Graph<String, u8>,
 }
 
+const ROOT_NODE: &str = "#ROOT";
+
 impl Walker {
     pub fn new(root: String) -> Self {
         Walker {
@@ -23,7 +25,16 @@ impl Walker {
     }
 
     pub fn collect(&mut self, entry: &String, parent_node: NodeIndex) {
-        println!("{entry}");
+        let duplicated = self
+            .graph
+            .node_indices()
+            .find(|i: &NodeIndex| self.graph[*i] == entry.to_owned());
+
+        if duplicated.is_some() {
+            return;
+        }
+
+        println!("[collecting] {entry}");
 
         let current_node = self.graph.add_node(entry.to_owned());
         self.graph.add_edge(parent_node, current_node, 1);
@@ -60,19 +71,7 @@ impl Walker {
             .expect("git list files fail");
         let files = output.stdout.lines().map(|str| str.unwrap());
 
-        files.for_each(|file| {
-            let existing = self
-                .graph
-                .node_indices()
-                .find(|i: &NodeIndex| self.graph[*i] == file);
-
-            match existing {
-                Some(_) => return,
-                None => {
-                    let root_node = self.graph.add_node(file.to_owned());
-                    self.collect(&file, root_node)
-                }
-            }
-        })
+        let root_node = self.graph.add_node(ROOT_NODE.to_string());
+        files.for_each(|file| self.collect(&file, root_node))
     }
 }
