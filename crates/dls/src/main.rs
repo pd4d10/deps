@@ -78,8 +78,18 @@ impl Walker {
         let files = output.stdout.lines().map(|str| str.unwrap());
 
         files.for_each(|file| {
-            let root_node = self.graph.add_node(file.to_owned());
-            self.collect(&file, root_node)
+            let existing = self
+                .graph
+                .node_indices()
+                .find(|i: &NodeIndex| self.graph[*i] == file);
+
+            match existing {
+                Some(_) => return,
+                None => {
+                    let root_node = self.graph.add_node(file.to_owned());
+                    self.collect(&file, root_node)
+                }
+            }
         })
     }
 }
