@@ -36,8 +36,17 @@ impl Walker {
 
         println!("[collecting] {entry}");
 
+        // add to graph
         let current_node = self.graph.add_node(entry.to_owned());
         self.graph.add_edge(parent_node, current_node, 1);
+
+        // by extension
+        let ext = Path::new(entry).extension().unwrap().to_str().unwrap();
+
+        let js_extensions = [".ts", ".tsx", ".js", ".jsx", ".json"];
+        if !js_extensions.contains(&ext) {
+            return;
+        }
 
         let abs_path = Path::new(&self.root).join(entry.to_owned());
         let code = fs::read_to_string(abs_path).expect("Should have been able to read the file");
