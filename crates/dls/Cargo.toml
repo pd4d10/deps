@@ -1,12 +1,9 @@
 [package]
 name = "dls"
 description = "Dependency list"
-
 version.workspace = true
 edition.workspace = true
 license.workspace = true
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 ast-grep-core = "0.6.3"
