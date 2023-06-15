@@ -3,7 +3,12 @@ use ast_grep_language::Tsx;
 use clap::Parser;
 use node_resolve::Resolver;
 use petgraph::{graph::Graph, stable_graph::NodeIndex};
-use std::{fs, path::PathBuf};
+use std::{
+    fs,
+    io::BufRead,
+    path::{Path, PathBuf},
+    process::Command,
+};
 
 /// Dependency list
 #[derive(Parser, Debug)]
@@ -11,39 +16,30 @@ use std::{fs, path::PathBuf};
 struct Args {
     /// File path
     #[arg(short, long)]
-    path: String,
+    root: String,
 }
 
 fn main() {
     let args = Args::parse();
-    let mut walker = Walker::new(args.path);
-    let entry = walker.entry.to_owned();
-    let root_node = walker.graph.add_node(entry.to_owned());
-
-    walker.collect(&entry, root_node);
+    let mut walker = Walker::new(args.root);
+    walker.collect_all();
     println!("Found {:?}", walker.graph);
 }
 
 struct Walker {
-    // root: String,
-    entry: String,
+    root: String,
     graph: Graph<String, u8>,
 }
 
 impl Walker {
-    fn new(entry: String) -> Self {
+    fn new(root: String) -> Self {
         Walker {
-            entry,
+            root,
             graph: Graph::new(),
         }
     }
 
     pub fn collect(&mut self, entry: &String, parent_node: NodeIndex) {
-        if entry.contains("node_modules") {
-            // TODO: use gitignore
-            return;
-        }
-
         println!("{entry}");
 
         let current_node = self.graph.add_node(entry.to_owned());
@@ -71,5 +67,19 @@ impl Walker {
                     }
                 }
             });
+    }
+
+    pub fn collect_all(&mut self) {
+        let output = Command::new("git")
+            .current_dir(Path::new(&self.root))
+            .args(["ls-files", "b"])
+            .output()
+            .expect("git list files fail");
+        let files = output.stdout.lines().map(|str| str.unwrap());
+
+        files.for_each(|file| {
+            let root_node = self.graph.add_node(file.to_owned());
+            self.collect(&file, root_node)
+        })
     }
 }
