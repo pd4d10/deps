@@ -39,7 +39,9 @@ impl Walker {
         let current_node = self.graph.add_node(entry.to_owned());
         self.graph.add_edge(parent_node, current_node, 1);
 
-        let code = fs::read_to_string(entry).expect("Should have been able to read the file");
+        let abs_path = Path::new(&self.root).join(entry.to_owned());
+        let code = fs::read_to_string(abs_path).expect("Should have been able to read the file");
+
         let sg = Tsx.ast_grep(code);
         sg.root()
             .find_all("import $_ from \"$PATH\"")
@@ -56,7 +58,12 @@ impl Walker {
                 match resolved {
                     Err(_) => return,
                     Ok(resolved) => {
-                        let entry = resolved.to_str().unwrap().to_string();
+                        let entry = Path::new(resolved.to_str().unwrap())
+                            .strip_prefix(PathBuf::from(&self.root))
+                            .unwrap()
+                            .to_str()
+                            .unwrap()
+                            .to_string();
                         self.collect(&entry, current_node);
                     }
                 }
