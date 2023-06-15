@@ -12,3 +12,5 @@ license.workspace = true
 ast-grep-core = "0.6.3"
 ast-grep-language = "0.6.3"
 clap = { version = "4.3.0", features = ["derive"] }
+node-resolve = "2.2.0"
+petgraph = "0.6.3"
