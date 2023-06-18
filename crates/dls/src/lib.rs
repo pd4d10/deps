@@ -11,6 +11,7 @@ use std::{
 
 pub struct Walker {
     root: String,
+    files: Vec<String>,
     pub graph: Graph<String, u8>,
 }
 
@@ -18,19 +19,32 @@ const ROOT_NODE: &str = "#ROOT";
 
 impl Walker {
     pub fn new(root: String) -> Self {
+        let output = Command::new("git")
+            .current_dir(Path::new(&root))
+            .arg("ls-files")
+            .output()
+            .expect("git list files fail");
+        let files: Vec<String> = output.stdout.lines().map(|str| str.unwrap()).collect();
+
         Walker {
             root,
+            files,
             graph: Graph::new(),
         }
     }
 
     pub fn collect(&mut self, entry: &String, parent_node: NodeIndex) {
-        let duplicated = self
+        if !self.files.contains(entry) {
+            return;
+        }
+
+        // skip duplicated
+        if self
             .graph
             .node_indices()
-            .find(|i: &NodeIndex| self.graph[*i] == entry.to_owned());
-
-        if duplicated.is_some() {
+            .find(|i: &NodeIndex| self.graph[*i] == entry.to_owned())
+            .is_some()
+        {
             return;
         }
 
@@ -80,14 +94,10 @@ impl Walker {
     }
 
     pub fn collect_all(&mut self) {
-        let output = Command::new("git")
-            .current_dir(Path::new(&self.root))
-            .arg("ls-files")
-            .output()
-            .expect("git list files fail");
-        let files = output.stdout.lines().map(|str| str.unwrap());
-
         let root_node = self.graph.add_node(ROOT_NODE.to_string());
-        files.for_each(|file| self.collect(&file, root_node))
+        self.files
+            .clone()
+            .iter()
+            .for_each(|file| self.collect(&file.to_owned(), root_node));
     }
 }
