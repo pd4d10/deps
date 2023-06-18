@@ -39,23 +39,20 @@ impl Walker {
             return;
         }
 
-        // skip duplicated
-        if self
-            .graph
-            .node_indices()
-            .find(|i: &NodeIndex| self.graph[*i] == entry.to_owned())
-            .is_some()
-        {
-            return;
-        }
-
         println!("[collecting] {entry}");
 
-        // add to graph
-        let current_node = self.graph.add_node(entry.to_owned());
+        let current_node = self
+            .graph
+            .node_indices()
+            .find(|i| self.graph[*i] == entry.to_owned())
+            // if not exist, create a new node
+            .unwrap_or_else(|| self.graph.add_node(entry.to_owned()));
+
         match parent_node {
             Some(parent_node) => {
-                self.graph.add_edge(parent_node, current_node, 1);
+                if !self.graph.contains_edge(parent_node, current_node) {
+                    self.graph.add_edge(parent_node, current_node, 1);
+                }
             }
             None => (),
         }
@@ -88,6 +85,7 @@ impl Walker {
                     .with_basedir(PathBuf::from(entry).parent().unwrap().to_owned());
 
                 let resolved = resolver.resolve(&specifier);
+
                 match resolved {
                     Err(_) => return,
                     Ok(resolved) => {
