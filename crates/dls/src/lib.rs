@@ -70,7 +70,8 @@ impl Walker {
         }
 
         let abs_path = Path::new(&self.root).join(entry.to_owned());
-        let code = fs::read_to_string(abs_path).expect("Should have been able to read the file");
+        let code = fs::read_to_string(abs_path.to_owned())
+            .expect("Should have been able to read the file");
 
         let sg = Tsx.ast_grep(code);
         sg.root()
@@ -82,7 +83,7 @@ impl Walker {
                 let resolver = Resolver::new()
                     .with_extensions([".ts", ".tsx", ".js", ".jsx", ".json"])
                     .with_main_fields(["source"]) // TODO:
-                    .with_basedir(PathBuf::from(entry).parent().unwrap().to_owned());
+                    .with_basedir(abs_path.parent().unwrap().to_owned());
 
                 let resolved = resolver.resolve(&specifier);
 
