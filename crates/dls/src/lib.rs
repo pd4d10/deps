@@ -18,8 +18,6 @@ pub struct Walker {
     pub graph: Graph<String, u8>,
 }
 
-const ROOT_NODE: &str = "#ROOT";
-
 impl Walker {
     pub fn new(root: String) -> Self {
         let output = Command::new("git")
@@ -36,7 +34,7 @@ impl Walker {
         }
     }
 
-    pub fn collect(&mut self, entry: &String, parent_node: NodeIndex) {
+    pub fn collect(&mut self, entry: &String, parent_node: Option<NodeIndex>) {
         if !self.files.contains(entry) {
             return;
         }
@@ -55,7 +53,12 @@ impl Walker {
 
         // add to graph
         let current_node = self.graph.add_node(entry.to_owned());
-        self.graph.add_edge(parent_node, current_node, 1);
+        match parent_node {
+            Some(parent_node) => {
+                self.graph.add_edge(parent_node, current_node, 1);
+            }
+            None => (),
+        }
 
         // by extension
         let ext = Path::new(entry)
@@ -94,17 +97,16 @@ impl Walker {
                             .to_str()
                             .unwrap()
                             .to_string();
-                        self.collect(&entry, current_node);
+                        self.collect(&entry, Some(current_node));
                     }
                 }
             });
     }
 
     pub fn collect_all(&mut self) {
-        let root_node = self.graph.add_node(ROOT_NODE.to_string());
         self.files
             .clone()
             .iter()
-            .for_each(|file| self.collect(&file.to_owned(), root_node));
+            .for_each(|file| self.collect(&file.to_owned(), None));
     }
 }
