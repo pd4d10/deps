@@ -50,7 +50,9 @@ impl Walker {
 
         match parent_node {
             Some(parent_node) => {
-                if !self.graph.contains_edge(parent_node, current_node) {
+                if self.graph.contains_edge(parent_node, current_node) {
+                    return;
+                } else {
                     self.graph.add_edge(parent_node, current_node, 1);
                 }
             }
