@@ -55,7 +55,11 @@ impl Walker {
         self.graph.add_edge(parent_node, current_node, 1);
 
         // by extension
-        let ext = Path::new(entry).extension().unwrap().to_str().unwrap();
+        let ext = Path::new(entry)
+            .extension()
+            .unwrap_or_default() // no extension with ""
+            .to_str()
+            .unwrap();
 
         let js_extensions = [".ts", ".tsx", ".js", ".jsx", ".json"];
         if !js_extensions.contains(&ext) {
