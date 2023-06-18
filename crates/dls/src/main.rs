@@ -1,5 +1,5 @@
 use clap::Parser;
-use dls::Walker;
+use dls::{Printer, Walker};
 
 /// Dependency list
 #[derive(Parser, Debug)]
@@ -8,11 +8,16 @@ struct Args {
     /// File path
     #[arg(short, long)]
     root: String,
+
+    #[arg(short, long)]
+    entry: String,
 }
 
 fn main() {
     let args = Args::parse();
     let mut walker = Walker::new(args.root);
     walker.collect_all();
-    println!("Found {:?}", walker.graph);
+
+    let printer = Printer::new(walker.graph);
+    printer.print(args.entry, 0);
 }

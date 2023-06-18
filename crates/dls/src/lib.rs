@@ -1,3 +1,6 @@
+mod printer;
+pub use printer::Printer;
+
 use ast_grep_core::Language;
 use ast_grep_language::Tsx;
 use node_resolve::Resolver;
