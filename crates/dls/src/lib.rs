@@ -67,7 +67,7 @@ impl Walker {
             .to_str()
             .unwrap();
 
-        let js_extensions = [".ts", ".tsx", ".js", ".jsx", ".json"];
+        let js_extensions = ["ts", "tsx", "js", "jsx", "json"];
         if !js_extensions.contains(&ext) {
             return;
         }
