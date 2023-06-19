@@ -18,6 +18,6 @@ fn main() {
     let mut walker = Walker::new(args.root);
     walker.collect_all();
 
-    let printer = Printer::new(walker.graph);
+    let mut printer = Printer::new(walker.graph);
     printer.print(args.entry, 0);
 }
