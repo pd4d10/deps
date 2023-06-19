@@ -81,6 +81,12 @@ impl Walker {
             .for_each(|node| {
                 let m = node.get_env().get_match("PATH");
                 let specifier = m.unwrap().text().to_string();
+                // println!("{specifier}");
+
+                // only relative path
+                if !specifier.starts_with(".") {
+                    return;
+                }
 
                 let resolver = Resolver::new()
                     .with_extensions([".ts", ".tsx", ".js", ".jsx", ".json"])
